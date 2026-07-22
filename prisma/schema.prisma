@@ -1,0 +1,162 @@
+// ─────────────────────────────────────────────
+// Raíz — schema de base de datos (PostgreSQL)
+// ─────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Auth (compatible con @auth/prisma-adapter) ----------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String? // solo si se usa credenciales además de magic link
+  role          UserRole  @default(USER)
+
+  accounts       Account[]
+  sessions       Session[]
+  editedGroups   GroupEditor[]
+  changeLogs     GroupChangeLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------- Directorio de agrupaciones ----------
+
+enum GroupStatus {
+  PENDING // recién creada, esperando aprobación de admin
+  APPROVED // visible públicamente
+  REJECTED
+  ARCHIVED // ya no está activa, se oculta pero no se borra
+}
+
+enum ActivityType {
+  CUBE_OF_TRUTH
+  LEAFLETING
+  TALKS
+  PROTEST
+  OUTREACH_STALL
+  OTHER
+}
+
+enum EditorRole {
+  OWNER // creó la agrupación / puede transferir edición
+  EDITOR // puede editar la ficha
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String   @db.Text
+
+  city        String
+  country     String
+  countryCode String // ISO 3166-1 alpha-2, para banderas/mapa
+  latitude    Float?
+  longitude   Float?
+
+  activityTypes ActivityType[]
+
+  meetingFrequency  String? // "Semanal", "Mensual", texto libre
+  nextMeetupAt      DateTime?
+  nextMeetupLocation String?
+
+  instagram String?
+  whatsapp  String?
+  website   String?
+  email     String?
+  logoUrl   String?
+
+  status GroupStatus @default(PENDING)
+
+  editors    GroupEditor[]
+  changeLogs GroupChangeLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([country, city])
+}
+
+model GroupEditor {
+  id      String     @id @default(cuid())
+  userId  String
+  groupId String
+  role    EditorRole @default(EDITOR)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, groupId])
+}
+
+// Historial simple de ediciones, para poder auditar/revertir cambios
+// hechos por editores de agrupaciones.
+model GroupChangeLog {
+  id      String @id @default(cuid())
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  editedByUserId String
+  editedBy       User   @relation(fields: [editedByUserId], references: [id])
+
+  // snapshot de los campos que cambiaron: { campo: { antes, despues } }
+  changes Json
+
+  createdAt DateTime @default(now())
+}
