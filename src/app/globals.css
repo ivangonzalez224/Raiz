@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --line: rgba(16, 21, 16, 0.14);
+}
+
+body {
+  background-color: theme("colors.canvas");
+  color: theme("colors.ink");
+}
