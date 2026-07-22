@@ -1,0 +1,31 @@
+# deps
+node_modules
+.pnp
+.pnp.js
+
+# next
+.next
+out
+build
+
+# env
+.env
+.env.local
+.env*.local
+
+# testing
+coverage
+playwright-report
+test-results
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
