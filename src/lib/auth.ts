@@ -12,8 +12,12 @@ export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
       from: process.env.EMAIL_FROM,
-      // Reemplaza el envío por SMTP (que NextAuth usa por defecto) por la API de Resend.
       sendVerificationRequest: async ({ identifier: email, url }) => {
+        if (process.env.NODE_ENV !== "production") {
+          // Solo en desarrollo: permite copiar el link directo y evitar
+          // que el pre-escaneo de seguridad de algunos correos lo consuma.
+          console.log("🔗 Magic link (copiar y pegar en el navegador):", url);
+        }
         await resend.emails.send({
           from: process.env.EMAIL_FROM!,
           to: email,
@@ -30,5 +34,13 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/ingresar",
     verifyRequest: "/ingresar/revisa-tu-correo",
+  },
+  callbacks: {
+    session: async ({ session, user }) => {
+      if (session.user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
   },
 };

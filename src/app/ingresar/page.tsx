@@ -2,14 +2,18 @@
 
 import { useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    await signIn("email", { email, redirect: false });
+    await signIn("email", { email, redirect: false, callbackUrl });
     setSent(true);
   }
 
