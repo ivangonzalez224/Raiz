@@ -27,6 +27,12 @@ export function Nav() {
           Registrar agrupación
         </Link>
 
+        {status === "authenticated" && session?.user?.role === "ADMIN" && (
+          <Link href="/admin/agrupaciones" className="opacity-75 hover:opacity-100">
+            Admin
+          </Link>
+        )}
+
         {status === "loading" && (
           <span className="text-xs text-ink-soft">Cargando sesión...</span>
         )}

@@ -14,8 +14,6 @@ export const authOptions: NextAuthOptions = {
       from: process.env.EMAIL_FROM,
       sendVerificationRequest: async ({ identifier: email, url }) => {
         if (process.env.NODE_ENV !== "production") {
-          // Solo en desarrollo: permite copiar el link directo y evitar
-          // que el pre-escaneo de seguridad de algunos correos lo consuma.
           console.log("🔗 Magic link (copiar y pegar en el navegador):", url);
         }
         await resend.emails.send({
@@ -39,6 +37,7 @@ export const authOptions: NextAuthOptions = {
     session: async ({ session, user }) => {
       if (session.user) {
         session.user.id = user.id;
+        session.user.role = user.role;
       }
       return session;
     },
