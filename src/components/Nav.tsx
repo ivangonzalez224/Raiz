@@ -20,6 +20,15 @@ export function Nav() {
       </Link>
 
       <div className="flex items-center gap-5 text-sm font-medium">
+        <Link href="/etica" className="opacity-75 hover:opacity-100">
+          Ética
+        </Link>
+        <Link href="/nutricion" className="opacity-75 hover:opacity-100">
+          Nutrición
+        </Link>
+        <Link href="/dudas" className="opacity-75 hover:opacity-100">
+          Dudas
+        </Link>
         <Link href="/directorio" className="opacity-75 hover:opacity-100">
           Directorio
         </Link>
