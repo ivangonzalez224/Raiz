@@ -10,10 +10,13 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setLoading(true);
     await signIn("email", { email, redirect: false, callbackUrl });
+    setLoading(false);
     setSent(true);
   }
 
@@ -36,16 +39,18 @@ export default function LoginPage() {
         <input
           type="email"
           required
+          disabled={loading}
           placeholder="tu@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-md border border-black/15 px-4 py-3 text-sm"
+          className="w-full rounded-md border border-black/15 px-4 py-3 text-sm disabled:opacity-60"
         />
         <button
           type="submit"
-          className="w-full rounded-md bg-forest px-4 py-3 font-semibold text-canvas"
+          disabled={loading}
+          className="w-full rounded-md bg-forest px-4 py-3 font-semibold text-canvas disabled:opacity-60"
         >
-          Enviarme el enlace
+          {loading ? "Enviando..." : "Enviarme el enlace"}
         </button>
       </form>
     </main>
