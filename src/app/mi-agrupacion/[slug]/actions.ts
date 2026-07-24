@@ -3,6 +3,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import type { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { groupSchema } from "@/lib/validations/group";
@@ -86,7 +87,7 @@ export async function updateGroup(
       data: {
         groupId,
         editedByUserId: session.user.id,
-        changes,
+        changes: changes as Prisma.InputJsonValue,
       },
     });
   }

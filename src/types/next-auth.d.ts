@@ -9,3 +9,9 @@ declare module "next-auth" {
     } & DefaultSession["user"];
   }
 }
+
+declare module "next-auth/adapters" {
+  interface AdapterUser {
+    role: UserRole;
+  }
+}
