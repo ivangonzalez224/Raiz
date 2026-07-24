@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Archivo_Black, Inter, IBM_Plex_Mono } from "next/font/google";
+import { AuthProvider } from "@/components/AuthProvider";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -37,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className={`${fraunces.variable} ${archivoBlack.variable} ${inter.variable} ${plexMono.variable} font-body`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

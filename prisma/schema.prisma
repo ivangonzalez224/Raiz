@@ -7,8 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // runtime
+  directUrl = env("DIRECT_URL") // migraciones
 }
 
 // ---------- Auth (compatible con @auth/prisma-adapter) ----------
