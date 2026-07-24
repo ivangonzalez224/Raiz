@@ -1,34 +1,20 @@
 import Link from "next/link";
-import type { Prisma, ActivityType } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { activityTypeValues, activityTypeLabels } from "@/lib/validations/group";
+import { buildGroupWhere, type DirectorySearchParams } from "@/lib/group-filters";
 import { FilterBar } from "./FilterBar";
 import { GroupCard } from "./GroupCard";
-
-type SearchParams = { country?: string; city?: string; activity?: string; q?: string };
 
 export default async function DirectoryPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: DirectorySearchParams;
 }) {
   const session = await getServerSession(authOptions);
 
-  const where: Prisma.GroupWhereInput = { status: "APPROVED" };
-
-  if (searchParams.country) where.country = searchParams.country;
-  if (searchParams.city) where.city = searchParams.city;
-  if (
-    searchParams.activity &&
-    (activityTypeValues as readonly string[]).includes(searchParams.activity)
-  ) {
-    where.activityTypes = { has: searchParams.activity as ActivityType };
-  }
-  if (searchParams.q) {
-    where.name = { contains: searchParams.q, mode: "insensitive" };
-  }
+  const where = buildGroupWhere(searchParams);
 
   const [groups, allApproved] = await Promise.all([
     prisma.group.findMany({ where, orderBy: [{ country: "asc" }, { city: "asc" }] }),
