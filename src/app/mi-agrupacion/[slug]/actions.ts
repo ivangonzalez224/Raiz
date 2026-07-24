@@ -6,25 +6,13 @@ import { revalidatePath } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { groupSchema } from "@/lib/validations/group";
+import { computeGroupChanges } from "@/lib/group-changes";
 
 export type UpdateGroupState = {
   error?: string;
   fieldErrors?: Record<string, string>;
   success?: boolean;
 };
-
-const trackedFields = [
-  "name",
-  "description",
-  "city",
-  "country",
-  "countryCode",
-  "meetingFrequency",
-  "instagram",
-  "whatsapp",
-  "website",
-  "email",
-] as const;
 
 export async function updateGroup(
   groupId: string,
@@ -73,20 +61,8 @@ export async function updateGroup(
 
   const data = parsed.data;
 
-  const changes: Record<string, { antes: unknown; despues: unknown }> = {};
-  for (const field of trackedFields) {
-    const before = (existing as Record<string, unknown>)[field] ?? "";
-    const after = (data as Record<string, unknown>)[field] ?? "";
-    if (before !== after) {
-      changes[field] = { antes: before, despues: after };
-    }
-  }
-  if (JSON.stringify(existing.activityTypes) !== JSON.stringify(data.activityTypes)) {
-    changes.activityTypes = {
-      antes: existing.activityTypes,
-      despues: data.activityTypes,
-    };
-  }
+  // Calcula qué campos cambiaron, para dejar un historial de auditoría.
+  const changes = computeGroupChanges(existing, data);
 
   await prisma.group.update({
     where: { id: groupId },
