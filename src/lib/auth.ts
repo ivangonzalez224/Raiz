@@ -1,13 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { Resend } from "resend";
-import { prisma } from "@/lib/prisma";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   session: { strategy: "database" },
   providers: [
     EmailProvider({
@@ -16,16 +10,6 @@ export const authOptions: NextAuthOptions = {
         if (process.env.NODE_ENV !== "production") {
           console.log("🔗 Magic link (copiar y pegar en el navegador):", url);
         }
-        await resend.emails.send({
-          from: process.env.EMAIL_FROM!,
-          to: email,
-          subject: "Tu enlace para entrar a Raíz",
-          html: `
-            <p>Hacé clic para iniciar sesión en Raíz:</p>
-            <p><a href="${url}">${url}</a></p>
-            <p>Si no lo pediste vos, ignora este correo.</p>
-          `,
-        });
       },
     }),
   ],
