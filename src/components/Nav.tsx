@@ -53,12 +53,17 @@ export function Nav() {
         )}
 
         {status === "unauthenticated" && (
-          <Link
-            href="/ingresar"
-            className="rounded-md bg-forest px-4 py-2 font-semibold text-canvas"
-          >
-            Ingresar
-          </Link>
+          <>
+            <Link href="/crear-cuenta" className="opacity-75 hover:opacity-100">
+              Crear cuenta
+            </Link>
+            <Link
+              href="/ingresar"
+              className="rounded-md bg-forest px-4 py-2 font-semibold text-canvas"
+            >
+              Ingresar
+            </Link>
+          </>
         )}
 
         {status === "authenticated" && session?.user?.email && (
