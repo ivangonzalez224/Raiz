@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { activityTypeValues, activityTypeLabels } from "@/lib/validations/group";
 import { buildGroupWhere, type DirectorySearchParams } from "@/lib/group-filters";
+import { sortGroupsByUpcomingEvent } from "@/lib/group-sort";
 import { FilterBar } from "./FilterBar";
 import { GroupCard } from "./GroupCard";
 
@@ -16,13 +17,15 @@ export default async function DirectoryPage({
 
   const where = buildGroupWhere(searchParams);
 
-  const [groups, allApproved] = await Promise.all([
+  const [rawGroups, allApproved] = await Promise.all([
     prisma.group.findMany({ where, orderBy: [{ country: "asc" }, { city: "asc" }] }),
     prisma.group.findMany({
       where: { status: "APPROVED" },
       select: { country: true, city: true },
     }),
   ]);
+
+  const groups = sortGroupsByUpcomingEvent(rawGroups);
 
   const countries = Array.from(new Set(allApproved.map((g) => g.country))).sort();
   const cities = Array.from(new Set(allApproved.map((g) => g.city))).sort();
