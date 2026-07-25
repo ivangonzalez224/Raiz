@@ -29,10 +29,16 @@ export async function registerGroup(
     countryCode: formData.get("countryCode"),
     activityTypes: formData.getAll("activityTypes"),
     meetingFrequency: formData.get("meetingFrequency") || undefined,
-    instagram: formData.get("instagram") || "",
+    socialMediaUrl: formData.get("socialMediaUrl") || "",
     whatsapp: formData.get("whatsapp") || "",
     website: formData.get("website") || "",
     email: formData.get("email") || "",
+    nextEventTitle: formData.get("nextEventTitle") || "",
+    nextEventDescription: formData.get("nextEventDescription") || "",
+    nextEventAddress: formData.get("nextEventAddress") || "",
+    nextEventDateTime: formData.get("nextEventDateTime") || "",
+    nextEventInstructions: formData.get("nextEventInstructions") || "",
+    nextEventRequirements: formData.get("nextEventRequirements") || "",
   };
 
   const parsed = groupSchema.safeParse(raw);
@@ -64,10 +70,18 @@ export async function registerGroup(
       countryCode: data.countryCode,
       activityTypes: data.activityTypes,
       meetingFrequency: data.meetingFrequency,
-      instagram: data.instagram || undefined,
+      socialMediaUrl: data.socialMediaUrl,
       whatsapp: data.whatsapp || undefined,
       website: data.website || undefined,
       email: data.email || undefined,
+      nextEventTitle: data.nextEventTitle || undefined,
+      nextEventDescription: data.nextEventDescription || undefined,
+      nextEventAddress: data.nextEventAddress || undefined,
+      nextEventDateTime: data.nextEventDateTime
+        ? new Date(data.nextEventDateTime)
+        : undefined,
+      nextEventInstructions: data.nextEventInstructions || undefined,
+      nextEventRequirements: data.nextEventRequirements || undefined,
       status: "PENDING",
       editors: {
         create: {

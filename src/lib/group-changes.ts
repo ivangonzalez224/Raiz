@@ -5,10 +5,16 @@ const trackedFields = [
   "country",
   "countryCode",
   "meetingFrequency",
-  "instagram",
+  "socialMediaUrl",
   "whatsapp",
   "website",
   "email",
+  "nextEventTitle",
+  "nextEventDescription",
+  "nextEventAddress",
+  "nextEventDateTime",
+  "nextEventInstructions",
+  "nextEventRequirements",
 ] as const;
 
 export type ChangeEntry = { antes: unknown; despues: unknown };

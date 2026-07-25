@@ -45,10 +45,16 @@ export async function updateGroup(
     countryCode: formData.get("countryCode"),
     activityTypes: formData.getAll("activityTypes"),
     meetingFrequency: formData.get("meetingFrequency") || undefined,
-    instagram: formData.get("instagram") || "",
+    socialMediaUrl: formData.get("socialMediaUrl") || "",
     whatsapp: formData.get("whatsapp") || "",
     website: formData.get("website") || "",
     email: formData.get("email") || "",
+    nextEventTitle: formData.get("nextEventTitle") || "",
+    nextEventDescription: formData.get("nextEventDescription") || "",
+    nextEventAddress: formData.get("nextEventAddress") || "",
+    nextEventDateTime: formData.get("nextEventDateTime") || "",
+    nextEventInstructions: formData.get("nextEventInstructions") || "",
+    nextEventRequirements: formData.get("nextEventRequirements") || "",
   };
 
   const parsed = groupSchema.safeParse(raw);
@@ -61,9 +67,24 @@ export async function updateGroup(
   }
 
   const data = parsed.data;
+  const parsedNextEventDateTime = data.nextEventDateTime
+    ? new Date(data.nextEventDateTime)
+    : null;
 
-  // Calcula qué campos cambiaron, para dejar un historial de auditoría.
-  const changes = computeGroupChanges(existing, data);
+  const comparableExisting = {
+    ...existing,
+    nextEventDateTime: existing.nextEventDateTime
+      ? existing.nextEventDateTime.toISOString()
+      : "",
+  };
+  const comparableUpdated = {
+    ...data,
+    nextEventDateTime: parsedNextEventDateTime
+      ? parsedNextEventDateTime.toISOString()
+      : "",
+  };
+
+  const changes = computeGroupChanges(comparableExisting, comparableUpdated);
 
   await prisma.group.update({
     where: { id: groupId },
@@ -75,10 +96,16 @@ export async function updateGroup(
       countryCode: data.countryCode,
       activityTypes: data.activityTypes,
       meetingFrequency: data.meetingFrequency ?? null,
-      instagram: data.instagram || null,
+      socialMediaUrl: data.socialMediaUrl,
       whatsapp: data.whatsapp || null,
       website: data.website || null,
       email: data.email || null,
+      nextEventTitle: data.nextEventTitle || null,
+      nextEventDescription: data.nextEventDescription || null,
+      nextEventAddress: data.nextEventAddress || null,
+      nextEventDateTime: parsedNextEventDateTime,
+      nextEventInstructions: data.nextEventInstructions || null,
+      nextEventRequirements: data.nextEventRequirements || null,
     },
   });
 

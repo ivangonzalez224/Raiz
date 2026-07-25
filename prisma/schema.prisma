@@ -8,8 +8,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL") // runtime
-  directUrl = env("DIRECT_URL") // migraciones
+  url       = env("DATABASE_URL") // pooler (pgbouncer, modo transacción) — usado en runtime
+  directUrl = env("DIRECT_URL") // conexión directa — usada solo para migraciones
 }
 
 // ---------- Auth (compatible con @auth/prisma-adapter) ----------
@@ -84,7 +84,7 @@ enum GroupStatus {
 
 enum ActivityType {
   CUBE_OF_TRUTH
-  LEAFLETING
+  OUTREACH_STREET
   TALKS
   PROTEST
   OUTREACH_STALL
@@ -110,15 +110,22 @@ model Group {
 
   activityTypes ActivityType[]
 
-  meetingFrequency  String? // "Semanal", "Mensual", texto libre
-  nextMeetupAt      DateTime?
-  nextMeetupLocation String?
+  meetingFrequency String? // "Semanal", "Mensual", texto libre
 
-  instagram String?
-  whatsapp  String?
-  website   String?
-  email     String?
-  logoUrl   String?
+  // Próximo evento (opcional como conjunto, pero si se completa alguno,
+  // la validación en la capa de aplicación exige título + dirección + fecha)
+  nextEventTitle         String?
+  nextEventDescription   String?   @db.Text
+  nextEventAddress       String?
+  nextEventDateTime      DateTime?
+  nextEventInstructions  String?   @db.Text
+  nextEventRequirements  String?   @db.Text
+
+  socialMediaUrl String // obligatorio: Instagram, Facebook, TikTok, etc.
+  whatsapp       String?
+  website        String?
+  email          String?
+  logoUrl        String?
 
   status GroupStatus @default(PENDING)
 

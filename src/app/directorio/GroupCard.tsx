@@ -9,6 +9,16 @@ function cityInitials(city: string, length = 3) {
     .toUpperCase();
 }
 
+function formatEventDate(date: Date) {
+  return new Intl.DateTimeFormat("es-PE", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
 export function GroupCard({ group, canEdit }: { group: Group; canEdit: boolean }) {
   return (
     <li className="flex gap-4 rounded-xl border border-black/10 bg-white p-5">
@@ -57,34 +67,45 @@ export function GroupCard({ group, canEdit }: { group: Group; canEdit: boolean }
 
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">{group.description}</p>
 
-        {(group.instagram || group.website || group.whatsapp || group.email) && (
-          <div className="mt-3 flex flex-wrap gap-3 text-xs">
-            {group.instagram && (
-              <a
-                href={group.instagram}
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium text-forest underline"
-              >
-                Instagram
-              </a>
-            )}
-            {group.website && (
-              <a
-                href={group.website}
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium text-forest underline"
-              >
-                Sitio web
-              </a>
-            )}
-            {group.whatsapp && (
-              <span className="text-ink-soft">WhatsApp: {group.whatsapp}</span>
-            )}
-            {group.email && <span className="text-ink-soft">{group.email}</span>}
+        {group.nextEventTitle && group.nextEventDateTime && (
+          <div className="mt-3 rounded-lg bg-sprout-pale p-3">
+            <p className="font-mono text-[11px] uppercase tracking-wide text-forest-deep">
+              Próximo evento
+            </p>
+            <p className="mt-1 text-sm font-semibold text-forest-deep">
+              {group.nextEventTitle}
+            </p>
+            <p className="text-xs text-ink-soft">
+              {formatEventDate(group.nextEventDateTime)}
+              {group.nextEventAddress && ` · ${group.nextEventAddress}`}
+            </p>
           </div>
         )}
+
+        <div className="mt-3 flex flex-wrap gap-3 text-xs">
+          <a
+            href={group.socialMediaUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium text-forest underline"
+          >
+            Red social
+          </a>
+          {group.website && (
+            <a
+              href={group.website}
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium text-forest underline"
+            >
+              Sitio web
+            </a>
+          )}
+          {group.whatsapp && (
+            <span className="text-ink-soft">WhatsApp: {group.whatsapp}</span>
+          )}
+          {group.email && <span className="text-ink-soft">{group.email}</span>}
+        </div>
       </div>
     </li>
   );
