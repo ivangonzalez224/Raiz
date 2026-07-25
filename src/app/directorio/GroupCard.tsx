@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Group } from "@prisma/client";
 import { activityTypeLabels } from "@/lib/validations/group";
+import { NextEventDisclosure } from "./NextEventDisclosure";
 
 function cityInitials(city: string, length = 3) {
   return city
@@ -9,17 +10,12 @@ function cityInitials(city: string, length = 3) {
     .toUpperCase();
 }
 
-function formatEventDate(date: Date) {
-  return new Intl.DateTimeFormat("es-PE", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
-}
-
 export function GroupCard({ group, canEdit }: { group: Group; canEdit: boolean }) {
+  const hasUpcomingEvent =
+    group.nextEventTitle &&
+    group.nextEventDateTime &&
+    group.nextEventDateTime.getTime() > Date.now();
+
   return (
     <li className="flex gap-4 rounded-xl border border-black/10 bg-white p-5">
       <div className="flex h-16 w-16 flex-none -rotate-6 flex-col items-center justify-center rounded-full border-2 border-dashed border-forest text-forest">
@@ -67,19 +63,15 @@ export function GroupCard({ group, canEdit }: { group: Group; canEdit: boolean }
 
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">{group.description}</p>
 
-        {group.nextEventTitle && group.nextEventDateTime && (
-          <div className="mt-3 rounded-lg bg-sprout-pale p-3">
-            <p className="font-mono text-[11px] uppercase tracking-wide text-forest-deep">
-              Próximo evento
-            </p>
-            <p className="mt-1 text-sm font-semibold text-forest-deep">
-              {group.nextEventTitle}
-            </p>
-            <p className="text-xs text-ink-soft">
-              {formatEventDate(group.nextEventDateTime)}
-              {group.nextEventAddress && ` · ${group.nextEventAddress}`}
-            </p>
-          </div>
+        {hasUpcomingEvent && group.nextEventTitle && group.nextEventDateTime && (
+          <NextEventDisclosure
+            title={group.nextEventTitle}
+            dateTime={group.nextEventDateTime}
+            address={group.nextEventAddress}
+            description={group.nextEventDescription}
+            instructions={group.nextEventInstructions}
+            requirements={group.nextEventRequirements}
+          />
         )}
 
         <div className="mt-3 flex flex-wrap gap-3 text-xs">

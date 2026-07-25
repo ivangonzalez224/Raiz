@@ -163,6 +163,11 @@ export function RegisterGroupForm() {
         <p className="text-xs text-ink-soft">
           Si lo completas, agrega al menos título, dirección y fecha/hora.
         </p>
+        {state.fieldErrors?.nextEventTitle && (
+          <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
+            ⚠ {state.fieldErrors.nextEventTitle}
+          </p>
+        )}
 
         <div className="mt-3 space-y-3">
           <div>
@@ -172,11 +177,6 @@ export function RegisterGroupForm() {
               placeholder="Ej. Cubo de la verdad — Parque Kennedy"
               className="mt-1 w-full rounded-md border border-black/15 px-3 py-2"
             />
-            {state.fieldErrors?.nextEventTitle && (
-              <p className="mt-1 text-xs text-red-700">
-                {state.fieldErrors.nextEventTitle}
-              </p>
-            )}
           </div>
 
           <div>
@@ -187,6 +187,11 @@ export function RegisterGroupForm() {
               placeholder="Breve descripción de la actividad"
               className="mt-1 w-full rounded-md border border-black/15 px-3 py-2"
             />
+            {state.fieldErrors?.nextEventDescription && (
+              <p className="mt-1 text-xs text-red-700">
+                {state.fieldErrors.nextEventDescription}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -216,6 +221,11 @@ export function RegisterGroupForm() {
               placeholder="Cómo llegar, punto de encuentro, qué hacer al llegar"
               className="mt-1 w-full rounded-md border border-black/15 px-3 py-2"
             />
+            {state.fieldErrors?.nextEventInstructions && (
+              <p className="mt-1 text-xs text-red-700">
+                {state.fieldErrors.nextEventInstructions}
+              </p>
+            )}
           </div>
 
           <div>
@@ -228,6 +238,11 @@ export function RegisterGroupForm() {
               placeholder="Ropa cómoda, agua, protector solar, traer material propio, etc."
               className="mt-1 w-full rounded-md border border-black/15 px-3 py-2"
             />
+            {state.fieldErrors?.nextEventRequirements && (
+              <p className="mt-1 text-xs text-red-700">
+                {state.fieldErrors.nextEventRequirements}
+              </p>
+            )}
           </div>
         </div>
       </fieldset>

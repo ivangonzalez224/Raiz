@@ -2,8 +2,19 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { activityTypeLabels } from "@/lib/validations/group";
 import { approveGroup, rejectGroup } from "./actions";
 import { ModerationSubmitButton } from "./ModerationSubmitButton";
+
+function formatEventDate(date: Date) {
+  return new Intl.DateTimeFormat("es-PE", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
 
 export default async function AdminGroupsPage() {
   const session = await getServerSession(authOptions);
@@ -54,7 +65,11 @@ export default async function AdminGroupsPage() {
                 <div>
                   <h2 className="font-semibold">{group.name}</h2>
                   <p className="text-sm text-ink-soft">
-                    {group.city}, {group.country} · {group.activityTypes.join(", ")}
+                    {group.city}, {group.country} ·{" "}
+                    {group.activityTypes
+                      .map((type) => activityTypeLabels[type])
+                      .join(", ")}
+                    {group.meetingFrequency && ` · ${group.meetingFrequency}`}
                   </p>
                 </div>
                 <span className="whitespace-nowrap rounded-full bg-sprout-pale px-3 py-1 text-xs font-medium text-forest-deep">
@@ -63,6 +78,61 @@ export default async function AdminGroupsPage() {
               </div>
 
               <p className="mt-3 text-sm text-ink-soft">{group.description}</p>
+
+              <div className="mt-3 flex flex-wrap gap-3 text-xs">
+                <a
+                  href={group.socialMediaUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-forest underline"
+                >
+                  Red social ↗
+                </a>
+                {group.website && (
+                  <a
+                    href={group.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-forest underline"
+                  >
+                    Sitio web ↗
+                  </a>
+                )}
+                {group.whatsapp && (
+                  <span className="text-ink-soft">WhatsApp: {group.whatsapp}</span>
+                )}
+                {group.email && (
+                  <span className="text-ink-soft">Email: {group.email}</span>
+                )}
+              </div>
+
+              {group.nextEventTitle && group.nextEventDateTime && (
+                <div className="mt-3 rounded-lg bg-canvas-dim p-3 text-xs text-ink-soft">
+                  <p className="font-mono uppercase tracking-wide text-forest">
+                    Próximo evento
+                  </p>
+                  <p className="mt-1 font-semibold text-ink">{group.nextEventTitle}</p>
+                  <p>
+                    {formatEventDate(group.nextEventDateTime)}
+                    {group.nextEventAddress && ` · ${group.nextEventAddress}`}
+                  </p>
+                  {group.nextEventDescription && (
+                    <p className="mt-1">{group.nextEventDescription}</p>
+                  )}
+                  {group.nextEventInstructions && (
+                    <p className="mt-1">
+                      <span className="font-semibold text-ink">Indicaciones: </span>
+                      {group.nextEventInstructions}
+                    </p>
+                  )}
+                  {group.nextEventRequirements && (
+                    <p className="mt-1">
+                      <span className="font-semibold text-ink">Requerimientos: </span>
+                      {group.nextEventRequirements}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="mt-4 flex gap-3">
                 <form action={approveGroup.bind(null, group.id)}>

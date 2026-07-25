@@ -46,11 +46,11 @@ export const groupSchema = z
     email: z.string().email("Email inválido").optional().or(z.literal("")),
 
     nextEventTitle: z.string().max(100).optional().or(z.literal("")),
-    nextEventDescription: z.string().max(600).optional().or(z.literal("")),
+    nextEventDescription: z.string().max(1000).optional().or(z.literal("")),
     nextEventAddress: z.string().max(200).optional().or(z.literal("")),
     nextEventDateTime: z.string().optional().or(z.literal("")),
-    nextEventInstructions: z.string().max(600).optional().or(z.literal("")),
-    nextEventRequirements: z.string().max(600).optional().or(z.literal("")),
+    nextEventInstructions: z.string().max(1000).optional().or(z.literal("")),
+    nextEventRequirements: z.string().max(1000).optional().or(z.literal("")),
   })
   .refine(
     (data) => {

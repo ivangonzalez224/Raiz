@@ -59,6 +59,10 @@ export async function updateGroup(
 
   const parsed = groupSchema.safeParse(raw);
   if (!parsed.success) {
+    console.error(
+      "❌ updateGroup validation failed:",
+      JSON.stringify(parsed.error.flatten(), null, 2),
+    );
     const fieldErrors: Record<string, string> = {};
     for (const issue of parsed.error.issues) {
       fieldErrors[String(issue.path[0])] = issue.message;
@@ -71,6 +75,7 @@ export async function updateGroup(
     ? new Date(data.nextEventDateTime)
     : null;
 
+  // Para el diff de auditoría, comparamos fechas como strings ISO (o "" si no hay).
   const comparableExisting = {
     ...existing,
     nextEventDateTime: existing.nextEventDateTime
