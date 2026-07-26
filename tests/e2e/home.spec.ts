@@ -7,6 +7,9 @@ test("la home carga y muestra el hero de ética", async ({ page }) => {
 
 test("se puede navegar al directorio", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: /directorio/i }).click();
+  await page
+    .getByRole("navigation")
+    .getByRole("link", { name: "Directorio", exact: true })
+    .click();
   await expect(page).toHaveURL(/directorio/);
 });

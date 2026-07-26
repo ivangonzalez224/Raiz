@@ -1,17 +1,24 @@
 import { test, expect } from "@playwright/test";
 
-test("el formulario de login muestra confirmación tras enviar el email", async ({
+test("el formulario de login muestra error con credenciales inválidas", async ({
   page,
 }) => {
   await page.goto("/ingresar");
 
   await expect(page.getByRole("heading", { name: "Ingresar" })).toBeVisible();
 
-  await page.getByPlaceholder("tu@email.com").fill("test@example.com");
-  await page.getByRole("button", { name: "Enviarme el enlace" }).click();
+  await page.getByPlaceholder("tu@email.com").fill("no-existe@example.com");
+  await page.getByPlaceholder("Contraseña").fill("password-incorrecta");
+  await page.getByRole("button", { name: "Ingresar" }).click();
 
-  await expect(page.getByRole("heading", { name: "Revisa tu correo" })).toBeVisible();
-  await expect(page.getByText("test@example.com")).toBeVisible();
+  await expect(page.getByText("Email o contraseña incorrectos.")).toBeVisible();
+});
+
+test("desde ingresar se puede navegar a crear cuenta", async ({ page }) => {
+  await page.goto("/ingresar");
+
+  await page.getByRole("link", { name: "Crear cuenta" }).click();
+  await expect(page).toHaveURL(/\/crear-cuenta/);
 });
 
 test("pide iniciar sesión antes de registrar una agrupación", async ({ page }) => {
