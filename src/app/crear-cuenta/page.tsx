@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { SignUpForm } from "./SignUpForm";
 
 export default function SignUpPage() {
@@ -7,7 +8,9 @@ export default function SignUpPage() {
       <p className="mt-2 text-sm text-ink-soft">
         Para registrar o editar la ficha de tu agrupación.
       </p>
-      <SignUpForm />
+      <Suspense fallback={<p className="mt-6 text-sm text-ink-soft">Cargando...</p>}>
+        <SignUpForm />
+      </Suspense>
     </main>
   );
 }
