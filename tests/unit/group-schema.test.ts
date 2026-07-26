@@ -9,7 +9,7 @@ const validInput = {
   countryCode: "pe",
   activityTypes: ["CUBE_OF_TRUTH"],
   meetingFrequency: "Semanal",
-  instagram: "",
+  socialMediaUrl: "https://instagram.com/cubolima",
   whatsapp: "",
   website: "",
   email: "",
@@ -47,18 +47,26 @@ describe("groupSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("permite campos opcionales vacíos (instagram, website, email)", () => {
+  it("permite campos opcionales vacíos (whatsapp, website, email)", () => {
     const result = groupSchema.safeParse(validInput);
     expect(result.success).toBe(true);
   });
 
-  it("rechaza un email inválido cuando se proporciona", () => {
-    const result = groupSchema.safeParse({ ...validInput, email: "no-es-un-email" });
+  it("rechaza si falta la red social (ahora es obligatoria)", () => {
+    const result = groupSchema.safeParse({ ...validInput, socialMediaUrl: "" });
     expect(result.success).toBe(false);
   });
 
-  it("rechaza una URL inválida en instagram cuando se proporciona", () => {
-    const result = groupSchema.safeParse({ ...validInput, instagram: "no-es-una-url" });
+  it("rechaza una URL inválida en la red social", () => {
+    const result = groupSchema.safeParse({
+      ...validInput,
+      socialMediaUrl: "no-es-una-url",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rechaza un email inválido cuando se proporciona", () => {
+    const result = groupSchema.safeParse({ ...validInput, email: "no-es-un-email" });
     expect(result.success).toBe(false);
   });
 
@@ -68,5 +76,27 @@ describe("groupSchema", () => {
       activityTypes: ["BAILE_VEGANO"],
     });
     expect(result.success).toBe(false);
+  });
+
+  it("acepta un próximo evento completo (título, dirección y fecha)", () => {
+    const result = groupSchema.safeParse({
+      ...validInput,
+      nextEventTitle: "Cubo de la verdad",
+      nextEventAddress: "Parque Kennedy, Miraflores",
+      nextEventDateTime: "2026-08-01T18:30",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rechaza un próximo evento incompleto (falta la dirección)", () => {
+    const result = groupSchema.safeParse({
+      ...validInput,
+      nextEventTitle: "Cubo de la verdad",
+      nextEventDateTime: "2026-08-01T18:30",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0]?.path).toEqual(["nextEventTitle"]);
+    }
   });
 });

@@ -42,14 +42,14 @@ describe("buildGroupWhere", () => {
     const where = buildGroupWhere({
       country: "Perú",
       city: "Lima",
-      activity: "LEAFLETING",
+      activity: "OUTREACH_STREET",
       q: "vegan",
     });
     expect(where).toEqual({
       status: "APPROVED",
       country: "Perú",
       city: "Lima",
-      activityTypes: { has: "LEAFLETING" },
+      activityTypes: { has: "OUTREACH_STREET" },
       name: { contains: "vegan", mode: "insensitive" },
     });
   });
