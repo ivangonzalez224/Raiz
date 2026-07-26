@@ -8,6 +8,7 @@ on:
 
 env:
   DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/raiz_test?schema=public"
+  DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/raiz_test?schema=public"
   NEXTAUTH_SECRET: "ci-test-secret"
   NEXTAUTH_URL: "http://localhost:3000"
 
