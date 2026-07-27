@@ -17,7 +17,7 @@ test("el formulario de login muestra error con credenciales inválidas", async (
 test("desde ingresar se puede navegar a crear cuenta", async ({ page }) => {
   await page.goto("/ingresar");
 
-  await page.getByRole("link", { name: "Crear cuenta" }).click();
+  await page.getByRole("main").getByRole("link", { name: "Crear cuenta" }).click();
   await expect(page).toHaveURL(/\/crear-cuenta/);
 });
 
