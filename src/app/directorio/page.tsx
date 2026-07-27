@@ -7,6 +7,8 @@ import { buildGroupWhere, type DirectorySearchParams } from "@/lib/group-filters
 import { sortGroupsByUpcomingEvent } from "@/lib/group-sort";
 import { FilterBar } from "./FilterBar";
 import { GroupCard } from "./GroupCard";
+import { DirectoryMapLoader } from "./DirectoryMapLoader";
+import type { MapGroup } from "./DirectoryMap";
 
 export default async function DirectoryPage({
   searchParams,
@@ -39,6 +41,22 @@ export default async function DirectoryPage({
     myGroupIds = new Set(editorRows.map((row) => row.groupId));
   }
 
+  const mapGroups: MapGroup[] = groups.map((group) => ({
+    id: group.id,
+    name: group.name,
+    slug: group.slug,
+    city: group.city,
+    country: group.country,
+    latitude: group.latitude,
+    longitude: group.longitude,
+    nextEventTitle: group.nextEventTitle,
+    nextEventDateTime: group.nextEventDateTime
+      ? group.nextEventDateTime.toISOString()
+      : null,
+    nextEventAddress: group.nextEventAddress,
+    socialMediaUrl: group.socialMediaUrl,
+  }));
+
   return (
     <main className="mx-auto max-w-4xl px-6 py-16">
       <p className="font-mono text-xs uppercase tracking-widest text-forest">
@@ -50,6 +68,10 @@ export default async function DirectoryPage({
       <p className="mt-4 max-w-2xl text-ink-soft">
         Empezando por LatAm. Encuentra agrupaciones y súmate mientras viajas.
       </p>
+
+      <div className="mt-8">
+        <DirectoryMapLoader groups={mapGroups} />
+      </div>
 
       <FilterBar
         countries={countries}

@@ -40,7 +40,7 @@ export function NextEventDisclosure({
             Próximo evento
           </p>
           <p className="mt-1 text-sm font-semibold text-forest-deep">{title}</p>
-          <p className="text-xs text-ink-soft">
+          <p className="text-xs text-ink-soft" suppressHydrationWarning>
             {formatEventDate(dateTime)}
             {address && ` · ${address}`}
           </p>
