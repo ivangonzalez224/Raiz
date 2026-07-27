@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { Group } from "@prisma/client";
 import { updateGroup, type UpdateGroupState } from "./actions";
 import { activityTypeLabels, activityTypeValues } from "@/lib/validations/group";
+import { LocationPicker } from "@/components/map/LocationPicker";
 
 const initialState: UpdateGroupState = {};
 
@@ -142,6 +143,11 @@ export function EditGroupForm({ group }: { group: Group }) {
           className="mt-1 w-full rounded-md border border-black/15 px-3 py-2"
         />
       </div>
+
+      <LocationPicker
+        defaultLatitude={group.latitude}
+        defaultLongitude={group.longitude}
+      />
 
       <div>
         <label className="block text-sm font-medium">

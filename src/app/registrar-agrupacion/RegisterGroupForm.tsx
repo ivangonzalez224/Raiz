@@ -3,6 +3,7 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { registerGroup, type RegisterGroupState } from "./actions";
 import { activityTypeLabels, activityTypeValues } from "@/lib/validations/group";
+import { LocationPicker } from "@/components/map/LocationPicker";
 
 const initialState: RegisterGroupState = {};
 
@@ -111,6 +112,8 @@ export function RegisterGroupForm() {
           className="mt-1 w-full rounded-md border border-black/15 px-3 py-2"
         />
       </div>
+
+      <LocationPicker />
 
       <div>
         <label className="block text-sm font-medium">

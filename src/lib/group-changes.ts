@@ -5,6 +5,8 @@ const trackedFields = [
   "country",
   "countryCode",
   "meetingFrequency",
+  "latitude",
+  "longitude",
   "socialMediaUrl",
   "whatsapp",
   "website",

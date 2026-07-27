@@ -45,6 +45,8 @@ export async function updateGroup(
     countryCode: formData.get("countryCode"),
     activityTypes: formData.getAll("activityTypes"),
     meetingFrequency: formData.get("meetingFrequency") || undefined,
+    latitude: formData.get("latitude") || "",
+    longitude: formData.get("longitude") || "",
     socialMediaUrl: formData.get("socialMediaUrl") || "",
     whatsapp: formData.get("whatsapp") || "",
     website: formData.get("website") || "",
@@ -59,10 +61,6 @@ export async function updateGroup(
 
   const parsed = groupSchema.safeParse(raw);
   if (!parsed.success) {
-    console.error(
-      "❌ updateGroup validation failed:",
-      JSON.stringify(parsed.error.flatten(), null, 2),
-    );
     const fieldErrors: Record<string, string> = {};
     for (const issue of parsed.error.issues) {
       fieldErrors[String(issue.path[0])] = issue.message;
@@ -71,11 +69,12 @@ export async function updateGroup(
   }
 
   const data = parsed.data;
+  const parsedLatitude = data.latitude ? parseFloat(data.latitude) : null;
+  const parsedLongitude = data.longitude ? parseFloat(data.longitude) : null;
   const parsedNextEventDateTime = data.nextEventDateTime
     ? new Date(data.nextEventDateTime)
     : null;
 
-  // Para el diff de auditoría, comparamos fechas como strings ISO (o "" si no hay).
   const comparableExisting = {
     ...existing,
     nextEventDateTime: existing.nextEventDateTime
@@ -84,6 +83,8 @@ export async function updateGroup(
   };
   const comparableUpdated = {
     ...data,
+    latitude: parsedLatitude,
+    longitude: parsedLongitude,
     nextEventDateTime: parsedNextEventDateTime
       ? parsedNextEventDateTime.toISOString()
       : "",
@@ -101,6 +102,8 @@ export async function updateGroup(
       countryCode: data.countryCode,
       activityTypes: data.activityTypes,
       meetingFrequency: data.meetingFrequency ?? null,
+      latitude: parsedLatitude,
+      longitude: parsedLongitude,
       socialMediaUrl: data.socialMediaUrl,
       whatsapp: data.whatsapp || null,
       website: data.website || null,
