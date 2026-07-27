@@ -35,6 +35,8 @@ export const groupSchema = z
       .array(z.enum(activityTypeValues))
       .min(1, "Elegí al menos una actividad"),
     meetingFrequency: z.string().max(60).optional(),
+    latitude: z.string().optional().or(z.literal("")),
+    longitude: z.string().optional().or(z.literal("")),
 
     socialMediaUrl: z
       .string()

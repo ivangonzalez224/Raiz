@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Archivo_Black, Inter, IBM_Plex_Mono } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
 import { Nav } from "@/components/Nav";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 const fraunces = Fraunces({

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Group } from "@prisma/client";
 import { activityTypeLabels } from "@/lib/validations/group";
+import { hasUpcomingEvent } from "@/lib/map-groups";
 import { NextEventDisclosure } from "./NextEventDisclosure";
 
 function cityInitials(city: string, length = 3) {
@@ -11,10 +12,7 @@ function cityInitials(city: string, length = 3) {
 }
 
 export function GroupCard({ group, canEdit }: { group: Group; canEdit: boolean }) {
-  const hasUpcomingEvent =
-    group.nextEventTitle &&
-    group.nextEventDateTime &&
-    group.nextEventDateTime.getTime() > Date.now();
+  const hasUpcoming = hasUpcomingEvent(group.nextEventTitle, group.nextEventDateTime);
 
   return (
     <li className="flex gap-4 rounded-xl border border-black/10 bg-white p-5">
@@ -63,7 +61,7 @@ export function GroupCard({ group, canEdit }: { group: Group; canEdit: boolean }
 
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">{group.description}</p>
 
-        {hasUpcomingEvent && group.nextEventTitle && group.nextEventDateTime && (
+        {hasUpcoming && group.nextEventTitle && group.nextEventDateTime && (
           <NextEventDisclosure
             title={group.nextEventTitle}
             dateTime={group.nextEventDateTime}
