@@ -2,6 +2,8 @@
 
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
+import { formatEventDate } from "@/lib/format-event-date";
+import { groupsWithLocation, hasUpcomingEvent } from "@/lib/map-groups";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -23,25 +25,10 @@ export type MapGroup = {
   socialMediaUrl: string;
 };
 
-function formatEventDate(iso: string) {
-  return new Intl.DateTimeFormat("es-PE", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(iso));
-}
-
 const DEFAULT_CENTER: [number, number] = [-9.19, -75.0152]; // centro aproximado de LatAm
 
 export function DirectoryMap({ groups }: { groups: MapGroup[] }) {
-  const now = Date.now();
-
-  const withLocation = groups.filter(
-    (g): g is MapGroup & { latitude: number; longitude: number } =>
-      g.latitude !== null && g.longitude !== null,
-  );
+  const withLocation = groupsWithLocation(groups);
 
   return (
     <MapContainer
@@ -54,11 +41,7 @@ export function DirectoryMap({ groups }: { groups: MapGroup[] }) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {withLocation.map((group) => {
-        const hasUpcomingEvent = Boolean(
-          group.nextEventTitle &&
-          group.nextEventDateTime &&
-          new Date(group.nextEventDateTime).getTime() > now,
-        );
+        const showEvent = hasUpcomingEvent(group.nextEventTitle, group.nextEventDateTime);
 
         return (
           <Marker key={group.id} position={[group.latitude, group.longitude]}>
@@ -69,10 +52,10 @@ export function DirectoryMap({ groups }: { groups: MapGroup[] }) {
                   {group.city}, {group.country}
                 </p>
 
-                {hasUpcomingEvent && group.nextEventDateTime && (
+                {showEvent && group.nextEventDateTime && (
                   <div className="mt-2 border-t border-black/10 pt-2 text-xs">
                     <p className="font-semibold">{group.nextEventTitle}</p>
-                    <p>{formatEventDate(group.nextEventDateTime)}</p>
+                    <p>{formatEventDate(new Date(group.nextEventDateTime))}</p>
                     {group.nextEventAddress && <p>{group.nextEventAddress}</p>}
                   </div>
                 )}

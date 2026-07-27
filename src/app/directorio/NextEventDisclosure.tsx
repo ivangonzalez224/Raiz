@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatEventDate } from "@/lib/format-event-date";
 
 type Props = {
   title: string;
@@ -10,16 +11,6 @@ type Props = {
   instructions: string | null;
   requirements: string | null;
 };
-
-function formatEventDate(date: Date) {
-  return new Intl.DateTimeFormat("es-PE", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
-}
 
 export function NextEventDisclosure({
   title,

@@ -3,18 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { activityTypeLabels } from "@/lib/validations/group";
+import { formatEventDate } from "@/lib/format-event-date";
 import { approveGroup, rejectGroup } from "./actions";
 import { ModerationSubmitButton } from "./ModerationSubmitButton";
-
-function formatEventDate(date: Date) {
-  return new Intl.DateTimeFormat("es-PE", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
-}
 
 export default async function AdminGroupsPage() {
   const session = await getServerSession(authOptions);
